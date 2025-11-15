@@ -1,3 +1,5 @@
+"use client"
+
 import { Landmark } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -11,8 +13,30 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { loginUser } from "@/app/services/auth";
 
 export default function LoginPage() {
+
+   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleLogin = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const data = await loginUser({ email, password });
+      console.log('Token recebido:', data.accessToken);
+      // redirecionar ou atualizar interface
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Erro ao fazer login');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="w-full min-h-screen grid grid-cols-1 lg:grid-cols-2">
       {/* Coluna Esquerda: Formulário */}
@@ -42,6 +66,8 @@ export default function LoginPage() {
                   placeholder="exemplo@dominio.com"
                   required
                   className="h-12 text-base focus:ring-2 focus:ring-blue-400"
+                   value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
 
@@ -64,13 +90,19 @@ export default function LoginPage() {
                   placeholder="********"
                   required
                   className="h-12 text-base focus:ring-2 focus:ring-blue-400"
+                  value={password}
+                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
             </CardContent>
 
             <CardFooter className="flex flex-col gap-4 mt-4">
-              <Button className="w-full h-14 text-lg font-semibold">
-                Login
+             <Button
+                className="w-full h-14 text-lg font-semibold"
+                onClick={handleLogin} // <-- aqui
+                disabled={loading}
+              >
+                {loading ? 'Acessando...' : 'Login'}
               </Button>
               <div className="text-center text-sm text-gray-500">
                 Não tem uma conta?{" "}
