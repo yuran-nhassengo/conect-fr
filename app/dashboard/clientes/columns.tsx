@@ -17,43 +17,39 @@ import { cn } from "@/lib/utils";
 export type ClienteMock = {
   id: string;
   nome: string;
-  nif: string; // Baseado no campo 'bi' do backend
+  nif: string;
   email: string;
   telefone: string;
-  status: "ATIVO" | "INATIVO" | "PENDENTE";
+  status: "ATIVO" | "INATIVO" | "PENDENTE" | "ATRASADO" | "LIQUIDADO" | "RENOVADO";
 };
 
 export const columns: ColumnDef<ClienteMock>[] = [
-  // Coluna Nome (Filtro Principal)
+  // Coluna Nome
   {
     accessorKey: "nome",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Nome
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Nome
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => <div className="pl-4 font-medium">{row.getValue("nome")}</div>,
   },
 
-  // Coluna NIF (Número de Identificação Fiscal)
+  // Coluna NIF
   {
     accessorKey: "nif",
     header: "NIF",
   },
-  
+
   // Coluna Email
   {
     accessorKey: "email",
     header: "Email",
-    cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("email")}</div>
-    ),
+    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
   },
 
   // Coluna Telefone
@@ -62,13 +58,16 @@ export const columns: ColumnDef<ClienteMock>[] = [
     header: "Telefone",
   },
 
-  // Coluna Status
+  // Coluna Status (apenas UMA vez, com fallback seguro)
   {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.getValue("status") as string;
-
+      const statusRaw = row.getValue("status");
+      if (!statusRaw) {
+        return <Badge variant="outline" className="capitalize">desconhecido</Badge>;
+      }
+      const status = String(statusRaw);
       return (
         <Badge
           variant={
@@ -80,7 +79,10 @@ export const columns: ColumnDef<ClienteMock>[] = [
           }
           className={cn(
             "capitalize",
-            status === "PENDENTE" && "bg-yellow-500 text-white hover:bg-yellow-600"
+            status === "PENDENTE" && "bg-yellow-500 text-white hover:bg-yellow-600",
+            status === "ATRASADO" && "bg-red-500 text-white hover:bg-red-600",
+            status === "LIQUIDADO" && "bg-green-500 text-white hover:bg-green-600",
+            status === "RENOVADO" && "bg-blue-500 text-white hover:bg-blue-600"
           )}
         >
           {status.toLowerCase()}
@@ -104,9 +106,7 @@ export const columns: ColumnDef<ClienteMock>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Ações</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(cliente.id)}
-            >
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(cliente.id)}>
               Copiar ID
             </DropdownMenuItem>
             <DropdownMenuItem>Ver Detalhes</DropdownMenuItem>

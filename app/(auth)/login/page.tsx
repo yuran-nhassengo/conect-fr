@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { loginUser } from "@/app/services/auth";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
 
@@ -22,14 +23,33 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const router = useRouter();
 
   const handleLogin = async () => {
     setLoading(true);
     setError('');
+
     try {
       const data = await loginUser({ email, password });
+
       console.log('Token recebido:', data.accessToken);
-      // redirecionar ou atualizar interface
+
+      // Salva token no localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('token', data.accessToken);
+      }
+
+      // Decodifica o token para pegar o role (JWT padrão)
+      const payload = JSON.parse(atob(data.accessToken.split('.')[1]));
+      const role = payload.role;
+
+      // Redireciona de acordo com o role
+      if (role === 'ADMIN' || role === 'EMPRESA_DONO' || role === 'FUNCIONARIO') {
+        router.push('/dashboard'); // página do dashboard
+      } else {
+        router.push('/'); // usuário comum ou cliente
+      }
+
     } catch (err: any) {
       setError(err.response?.data?.message || 'Erro ao fazer login');
     } finally {

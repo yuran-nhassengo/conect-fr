@@ -1,8 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3001'; // URL do seu backend NestJS
+const API_URL = 'http://localhost:3001'; // URL do backend NestJS
 
-// Cria instância do Axios
 const axiosInstance = axios.create({
   baseURL: API_URL,
   headers: {
@@ -10,13 +9,34 @@ const axiosInstance = axios.create({
   },
 });
 
-// Adiciona o token do localStorage em todas as requisições
-axiosInstance.interceptors.request.use((config) => {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-  if (token && config.headers) {
-    config.headers['Authorization'] = `Bearer ${token}`;
+// Interceptor para adicionar token a cada requisição
+axiosInstance.interceptors.request.use(
+  (config) => {
+    let token = null;
+    if (typeof window !== 'undefined') {
+      token = localStorage.getItem('token');
+    }
+
+    console.log('[Axios] Token sendo enviado:', token);
+
+    if (token && config.headers) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  return config;
-});
+);
+
+// Interceptor para log de resposta (útil para debug de 401)
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('[Axios] Erro na requisição:', error.response?.status, error.response?.data);
+    return Promise.reject(error);
+  }
+);
 
 export default axiosInstance;
