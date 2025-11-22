@@ -1,32 +1,37 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { PlusCircle } from "lucide-react";
-
-import { columns, type EmprestimoMock } from "./columns";
-import { DataTable } from "./data-table";
-import { AddEmprestimoInline } from "@/app/compontes/modals/add-emprestimo-modal";
-
-// ---------- Mock de Empréstimos ----------
-const mockData: EmprestimoMock[] = [
-  { id: "EMP-001", clienteNome: "João Silva", valorPrincipal: 50000, jurosPercent: 30, status: "ATIVO", dataVencimento: "2025-12-10" },
-  { id: "EMP-002", clienteNome: "Maria Sousa", valorPrincipal: 25000, jurosPercent: 25, status: "LIQUIDADO", dataVencimento: "2025-11-01" },
-  { id: "EMP-003", clienteNome: "Carlos Mendes", valorPrincipal: 100000, jurosPercent: 30, status: "ATRASADO", dataVencimento: "2025-10-15" },
-  { id: "EMP-004", clienteNome: "Ana Pereira", valorPrincipal: 15000, jurosPercent: 35, status: "RENOVADO", dataVencimento: "2025-12-20" },
-];
-
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat("pt-MZ", { style: "currency", currency: "MZN", minimumFractionDigits: 2 }).format(value);
+import React, { useState } from 'react';
+import { PlusCircle } from 'lucide-react';
+import { DataTable } from './data-table';
+import { AddEmprestimoInline } from '@/app/compontes/modals/add-emprestimo-modal';
+import { columns } from './columns';
+import { useQueryClient } from '@tanstack/react-query';
+import { useEmprestimos } from '@/app/hooks/useEmprestimos';
 
 export default function EmprestimosPage() {
   const [formOpen, setFormOpen] = useState(false);
+  const queryClient = useQueryClient();
+
+  const { data: emprestimos = [], isLoading, isError } = useEmprestimos();
+
+  // Mapeia os dados para incluir clienteNome
+  const emprestimosFormatados = emprestimos.map(e => ({
+    ...e,
+    clienteNome: e.cliente?.nome || '—', // cria clienteNome para a tabela
+  }));
 
   // Estatísticas
-  const totalEmprestimos = mockData.length;
-  const totalAtivos = mockData.filter(e => e.status === "ATIVO").length;
-  const totalLiquidado = mockData.filter(e => e.status === "LIQUIDADO").length;
-  const totalAtrasado = mockData.filter(e => e.status === "ATRASADO").length;
-  const totalValor = mockData.reduce((acc, e) => acc + e.valorPrincipal, 0);
+  const totalEmprestimos = emprestimosFormatados.length;
+  const totalAtivos = emprestimosFormatados.filter(e => e.status === 'ATIVO').length;
+  const totalLiquidado = emprestimosFormatados.filter(e => e.status === 'LIQUIDADO').length;
+  const totalAtrasado = emprestimosFormatados.filter(e => e.status === 'ATRASADO').length;
+  const totalValor = emprestimosFormatados.reduce((acc, e) => acc + e.valorPrincipal, 0);
+
+  const formatCurrency = (value: number) =>
+    new Intl.NumberFormat('pt-MZ', { style: 'currency', currency: 'MZN', minimumFractionDigits: 2 }).format(value);
+
+  if (isLoading) return <p className="p-6">Carregando empréstimos...</p>;
+  if (isError) return <p className="p-6 text-red-600">Erro ao carregar empréstimos.</p>;
 
   return (
     <div className="p-6 md:p-10 min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -45,18 +50,23 @@ export default function EmprestimosPage() {
           className="flex items-center bg-blue-600 text-black px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition-colors"
         >
           <PlusCircle className="mr-2 h-4 w-4" />
-          {formOpen ? "Fechar Formulário" : "Adicionar Novo Empréstimo"}
+          {formOpen ? 'Fechar Formulário' : 'Adicionar Novo Empréstimo'}
         </button>
       </header>
 
       {/* Formulário Inline */}
       {formOpen && (
         <div className="mb-8">
-          <AddEmprestimoInline onOpenChangeCards={(open) => setFormOpen(!open)} />
+          <AddEmprestimoInline
+            onOpenChangeCards={() => {
+              setFormOpen(false);
+              queryClient.invalidateQueries(['emprestimos']); // Atualiza tabela após adicionar
+            }}
+          />
         </div>
       )}
 
-      {/* Cards e Tabela só aparecem se o formulário estiver fechado */}
+      {/* Cards e Tabela */}
       {!formOpen && (
         <>
           {/* Cards de Estatísticas */}
@@ -86,7 +96,7 @@ export default function EmprestimosPage() {
           {/* Tabela de Empréstimos */}
           <DataTable
             columns={columns}
-            data={mockData}
+            data={emprestimosFormatados}
             filterColumnId="clienteNome"
             filterPlaceholder="Pesquisar por nome do cliente..."
           />
@@ -94,7 +104,7 @@ export default function EmprestimosPage() {
       )}
 
       <footer className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-        Dados de demonstração. Conecte ao backend para dados reais.
+        Dados carregados do backend.
       </footer>
     </div>
   );

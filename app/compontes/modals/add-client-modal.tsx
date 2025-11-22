@@ -6,19 +6,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { PlusCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import axiosInstance from "@/app/services/axiosInstance";
 
 // ---------- Helpers ----------
 const cn = (...classes: string[]) => classes.filter(Boolean).join(" ");
 
 // ---------- Botão ----------
 const Button = ({ children, className, variant = "default", size = "default", disabled, ...props }: any) => {
-  let base =
+  const base =
     "inline-flex items-center justify-center rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none";
-  let variantStyles =
+  const variantStyles =
     variant === "outline"
       ? "border border-gray-300 bg-white text-gray-900 hover:bg-gray-50"
       : "bg-blue-600 text-white hover:bg-blue-700 shadow-md";
-  let sizeStyles = "h-10 px-4 py-2";
+  const sizeStyles = "h-10 px-4 py-2";
   return (
     <button className={cn(base, variantStyles, sizeStyles, className)} disabled={disabled} {...props}>
       {children}
@@ -29,7 +30,7 @@ const Button = ({ children, className, variant = "default", size = "default", di
 // ---------- Schema Zod ----------
 const formSchema = z.object({
   nome: z.string().min(2, { message: "O nome deve ter pelo menos 2 caracteres." }),
-  contacto: z.string().regex(/^8[2-79]\d{7}$/, { message: "Contacto inválido. Use o formato 8XXXXXXXX." }),
+  contacto: z.string().regex(/^8[2-79]\d{8}$/, { message: "Contacto inválido. Use o formato 8XXXXXXXX." }),
   email: z.string().email({ message: "Email inválido." }).optional().or(z.literal("")),
   bi: z.string().min(5, { message: "O BI deve ter pelo menos 5 caracteres." }).optional().or(z.literal("")),
 });
@@ -47,20 +48,39 @@ export function AddClientInline({ onSubmitSuccess }: { onSubmitSuccess?: (data: 
   const { handleSubmit, control, reset, formState: { isSubmitting, errors } } = form;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log("Dados do Cliente:", values);
+  try {
+    const response = await axiosInstance.post("/clientes", values);
 
-    await new Promise((resolve) => setTimeout(resolve, 1500)); // simula envio API
+    const clienteCriado = response.data;
 
-    toast({ title: "Sucesso!", description: `Cliente ${values.nome} registado.` });
+    toast({
+      title: "Sucesso!",
+      description: `Cliente ${clienteCriado.nome} registado com sucesso.`,
+    });
+
     setSubmissionSuccess(true);
     reset();
-    onSubmitSuccess?.(values);
+    onSubmitSuccess?.(clienteCriado);
 
     setTimeout(() => {
       setSubmissionSuccess(false);
       setIsOpen(false);
     }, 2000);
-  };
+
+  } catch (error: any) {
+    console.error("Erro ao criar cliente:", error);
+
+    const msg =
+      error.response?.data?.message ||
+      "Falha ao criar o cliente. Verifique os dados.";
+
+    toast({
+      title: "Erro!",
+      description: msg,
+    });
+  }
+};
+
 
   return (
     <div className="w-full">

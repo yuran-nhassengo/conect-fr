@@ -6,16 +6,8 @@ import { columns, UserMock } from "./columns";
 import { DataTable } from "./data-table";
 import { PlusCircle } from "lucide-react";
 import { cn } from "@/lib/utils"; // função para concatenar classes
+import { useUtilizadores } from "@/app/hooks/useUtilizadores";
 
-// ------------------ Simulação de API ------------------
-async function getUsersData(): Promise<UserMock[]> {
-  return [
-    { id: "usr_001", name: "Dono Principal (Você)", email: "dono@empresa.com", role: "EMPRESA_DONO", createdAt: "2024-01-01T10:00:00Z" },
-    { id: "usr_002", name: "Funcionário A", email: "func_a@empresa.com", role: "FUNCIONARIO", createdAt: "2024-03-15T12:00:00Z" },
-    { id: "usr_003", name: "Funcionário B", email: "func_b@empresa.com", role: "FUNCIONARIO", createdAt: "2024-05-20T08:00:00Z" },
-    { id: "clt_001", name: "Cliente Portal", email: "cliente@portal.com", role: "CLIENTE", createdAt: "2024-07-10T14:00:00Z" },
-  ];
-}
 
 // ------------------ Botão Customizado ------------------
 const Button = ({ children, className, variant = "default", size = "default", disabled, ...props }: any) => {
@@ -35,24 +27,22 @@ const Button = ({ children, className, variant = "default", size = "default", di
 
 // ------------------ Página Principal ------------------
 export default function UtilizadoresPage() {
-  const [users, setUsers] = useState<UserMock[]>([]);
+
   const [isFormVisible, setIsFormVisible] = useState(false);
 
-  // Carregar usuários simulados
-  useEffect(() => {
-    getUsersData().then(setUsers);
-  }, []);
+  const {data: users = [] , isLoading,isError} = useUtilizadores();
+
 
   // Adicionar novo usuário
   const handleAddUser = (newUser: UserMock) => {
-    setUsers((prev) => [
-      ...prev,
-      {
-        ...newUser,
-        id: `usr_${users.length + 1}`,
-        createdAt: new Date().toISOString(),
-      },
-    ]);
+    // setUsers((prev) => [
+    //   ...prev,
+    //   {
+    //     ...newUser,
+    //     id: `usr_${users.length + 1}`,
+    //     createdAt: new Date().toISOString(),
+    //   },
+    // ]);
     setIsFormVisible(false); // Fecha o form
   };
 

@@ -101,7 +101,10 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell, cellIndex) => (
-                    <TableCell key={`${row.id}-${cell.id}-${cellIndex}`}>
+                    <TableCell key={`${row.id}-${cell.id}-${cellIndex}`}
+                     onClick={() => {
+                      const clienteId = row.original.id;
+                      window.location.href = `/dashboard/clientes/${clienteId}`;}}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

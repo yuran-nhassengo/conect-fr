@@ -103,8 +103,11 @@ export const columns: ColumnDef<UserMock>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Ações</DropdownMenuLabel>
-            <DropdownMenuItem>Editar Cargo</DropdownMenuItem>
-            <DropdownMenuItem className="text-red-600">
+            <DropdownMenuItem className="text-gray-600">Editar Cargo</DropdownMenuItem>
+            <DropdownMenuItem className="text-green-600">
+              Activar Utilizador
+            </DropdownMenuItem>
+             <DropdownMenuItem className="text-red-600">
               Suspender Utilizador
             </DropdownMenuItem>
           </DropdownMenuContent>

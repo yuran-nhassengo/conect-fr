@@ -72,6 +72,11 @@ export default function DashboardLayout({
       href: "/dashboard/utilizadores",
       icon: UserCog,
     },
+    {
+      title: "Perfil",
+      href: "/dashboard/utilizadores",
+      icon: UserCog,
+    },
   ];
 
   // Links de rodapé da sidebar (já estava correto)

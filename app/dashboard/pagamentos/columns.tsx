@@ -52,6 +52,26 @@ export const columns: ColumnDef<PagamentoMock>[] = [
     ),
   },
 
+    // Coluna ID do Empréstimo
+  {
+    accessorKey: "clienteNome",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Nome do Cliente
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="pl-4 font-medium">{row.getValue("clienteNome")}</div>
+    ),
+  },
+
+
   // Coluna Valor Pago
   {
     accessorKey: "valorPago",

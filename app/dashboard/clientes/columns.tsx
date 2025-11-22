@@ -42,7 +42,7 @@ export const columns: ColumnDef<ClienteMock>[] = [
   // Coluna NIF
   {
     accessorKey: "nif",
-    header: "NIF",
+    header: "BI",
   },
 
   // Coluna Email
@@ -109,8 +109,13 @@ export const columns: ColumnDef<ClienteMock>[] = [
             <DropdownMenuItem onClick={() => navigator.clipboard.writeText(cliente.id)}>
               Copiar ID
             </DropdownMenuItem>
-            <DropdownMenuItem>Ver Detalhes</DropdownMenuItem>
+            <DropdownMenuItem
+                 onClick={() => {
+                    window.location.href = `/dashboard/clientes/${cliente.id}`;
+            }}
+            >Ver Detalhes</DropdownMenuItem>
             <DropdownMenuItem>Ver Histórico de Empréstimos</DropdownMenuItem>
+             <DropdownMenuItem>Ver Histórico de Pagamentos</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
