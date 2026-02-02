@@ -79,8 +79,8 @@ const [novoJuros, setNovoJuros] = useState<number | null>(null);
   const handleRenovarEmprestimo = async () => {
   try {
     await axiosInstance.post(`/emprestimos/${cliente.emprestimos[0].id}/renovar`, {
-      dataVencimento: novaDataVencimento,
-      jurosPercent: novoJuros,
+      novaDataVencimento: novaDataVencimento, 
+       novaTaxaJuros: novoJuros, 
     });
     setShowRenovar(false);
     // Aqui você pode refazer o fetch do cliente/emprestimos
