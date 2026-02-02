@@ -31,6 +31,12 @@ export default function ClienteDetalhePage() {
 
   const { data: cliente, isLoading, isError } = useCliente(clienteId);
 
+
+  const [showRenovar, setShowRenovar] = useState(false);
+const [novaDataVencimento, setNovaDataVencimento] = useState<Date | null>(null);
+const [novoJuros, setNovoJuros] = useState<number | null>(null);
+
+
   // Estados controlados
   const [nome, setNome] = useState("");
   const [contacto, setContacto] = useState("");
@@ -68,6 +74,20 @@ export default function ClienteDetalhePage() {
     setGenero(cliente.genero || "");
     setIsEditing(false);
   };
+
+
+  const handleRenovarEmprestimo = async () => {
+  try {
+    await axiosInstance.post(`/emprestimos/${cliente.emprestimos[0].id}/renovar`, {
+      dataVencimento: novaDataVencimento,
+      jurosPercent: novoJuros,
+    });
+    setShowRenovar(false);
+    // Aqui você pode refazer o fetch do cliente/emprestimos
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -333,22 +353,94 @@ export default function ClienteDetalhePage() {
   </CardFooter>
 </Card>
 
+<div className="flex gap-2 mt-2">
+  {cliente.emprestimos?.some(emp => emp.status === 'ATIVO' || emp.status === 'ATRASADO') ? (
+    // RENOVAÇÃO
+    <Button
+      className="flex-1 bg-yellow-600 hover:bg-yellow-700"
+      onClick={() => setShowRenovar(true)}
+    >
+      Renovar Empréstimo
+    </Button>
+  ) : (
+    // NOVO EMPRÉSTIMO
+    <Button
+      className="flex-1 bg-blue-600 hover:bg-blue-700"
+      onClick={() => router.push(`/emprestimos/criar?cliente=${cliente.id}`)}
+    >
+      Novo Empréstimo
+    </Button>
+  )}
 
-          <div className="flex gap-2 mt-2">
-            <Button
-              className="flex-1 bg-blue-600 hover:bg-blue-700"
-              onClick={() => router.push(`/emprestimos/criar?cliente=${cliente.id}`)}
-            >
-              Novo Empréstimo
-            </Button>
+  <Button
+    className="flex-1 bg-green-600 hover:bg-green-700"
+    onClick={() => router.push(`/pagamentos?clienteId=${cliente.id}`)}
+  >
+    Fazer Pagamento
+  </Button>
+</div>
 
+{/* MODAL/SEÇÃO DE RENOVAÇÃO */}
+{showRenovar && (
+  <Card className="mt-4 border rounded-xl p-6">
+    <CardHeader>
+      <CardTitle>Renovar Empréstimo</CardTitle>
+      <CardDescription>Defina nova data de vencimento e juros</CardDescription>
+    </CardHeader>
+
+    <CardContent className="space-y-4">
+      {/* Data de Vencimento */}
+      <div className="flex flex-col">
+        <Label>Nova Data de Vencimento</Label>
+        <Popover>
+          <PopoverTrigger asChild>
             <Button
-              className="flex-1 bg-green-600 hover:bg-green-700"
-              onClick={() => router.push(`/pagamentos?clienteId=${cliente.id}`)}
+              variant="outline"
+              className="justify-start text-left font-normal"
             >
-              Fazer Pagamento
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {novaDataVencimento ? format(novaDataVencimento, "dd/MM/yyyy") : "Selecione uma data"}
             </Button>
-          </div>
+          </PopoverTrigger>
+          <PopoverContent className="p-0">
+            <Calendar
+              mode="single"
+              selected={novaDataVencimento || undefined}
+              onSelect={(date) => setNovaDataVencimento(date ?? null)}
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      {/* Juros */}
+      <div>
+        <Label>Novo Percentual de Juros (%)</Label>
+        <Input
+          type="number"
+          value={novoJuros}
+          onChange={(e) => setNovoJuros(Number(e.target.value))}
+        />
+      </div>
+    </CardContent>
+
+    <CardFooter className="flex gap-2">
+      <Button
+        className="flex-1 bg-yellow-600 hover:bg-yellow-700"
+        onClick={handleRenovarEmprestimo}
+        disabled={!novaDataVencimento || !novoJuros}
+      >
+        Renovar
+      </Button>
+      <Button
+        className="flex-1 bg-red-500 hover:bg-red-600"
+        variant="secondary"
+        onClick={() => setShowRenovar(false)}
+      >
+        Cancelar
+      </Button>
+    </CardFooter>
+  </Card>
+)}
 
         </div>
       </div>

@@ -20,12 +20,20 @@ import { Button } from "@/components/ui/button";
 
 // Importe os ícones
 import { LogOut, User, Settings } from "lucide-react";
+import { useAuth } from "../context/auth-context";
 
 export function UserMenu() {
   // (No futuro, estes dados virão da sua sessão de autenticação)
-  const userName = "Lamarck";
-  const userEmail = "lamarck@exemplo.com";
-  const userInitials = "LA";
+ const { user, logout } = useAuth();
+
+  const userName = user?.name || "Usuário";
+  const userEmail = user?.email || "usuario@exemplo.com";
+  const userInitials = userName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
     <DropdownMenu>
@@ -56,7 +64,7 @@ export function UserMenu() {
           <span>Definições</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={logout}>
           <LogOut className="mr-2 h-4 w-4" />
           <span>Sair (Logout)</span>
         </DropdownMenuItem>

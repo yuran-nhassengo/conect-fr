@@ -53,6 +53,11 @@ export default function DashboardLayout({
       icon: Landmark,
     },
     {
+      title: "Empresas",
+      href: "/dashboard/empresas",
+      icon: Users,
+    },
+    {
       title: "Clientes",
       href: "/dashboard/clientes",
       icon: Users,

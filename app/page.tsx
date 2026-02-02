@@ -12,9 +12,9 @@ import {
   ShieldCheck,
   Users,
   Zap,
-  Link,
 } from "lucide-react";
 import React from "react";
+import Link from "next/link"; 
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -82,7 +82,7 @@ export default function LandingPage() {
           {/* Imagem de Fundo */}
           <div className="absolute inset-0 z-0">
             <img
-              src="https://placehold.co/1600x900/a7a7a1/4d4d4d?text=Imagem+Inspiradora+de+Empreendedorismo"
+              src="/images/hero2.png"
               alt="Fundo"
               className="h-full w-full object-cover"
             />
@@ -95,7 +95,7 @@ export default function LandingPage() {
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
               A Gestão de Micro-Crédito,
               <br />
-              <span className="text-primary">Simples e Poderosa.</span>
+              <span className="text-blue-600">Simples e Poderosa.</span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-200 md:text-xl">
               Conecta-Crédito é a plataforma unificada que centraliza a sua
@@ -103,13 +103,13 @@ export default function LandingPage() {
               análise de risco.
             </p>
             <div className="mt-10">
-              <Button asChild size="lg">
-                <Link href="#precos">Começar Agora</Link>
-              </Button>
-            </div>
+            <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-white">
+              <Link href="#precos" className="text-2xl font-extrabold ">Começar Agora</Link>
+            </Button>
+          </div>
 
             {/* Sinais de Confiança (Baseado na Imagem de Referência) */}
-            <div className="mt-20 grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="mt-60 grid grid-cols-1 gap-4 sm:grid-cols-3">
               <TrustCard
                 icon={ShieldCheck}
                 title="Segurança Total"
@@ -185,54 +185,132 @@ export default function LandingPage() {
         </section>
 
         {/* Secção de Preços */}
-        <section
-          id="precos"
-          className="w-full bg-gray-50 py-20 md:py-32 dark:bg-gray-900"
+     <section
+  id="precos"
+  className="w-full bg-gray-50 py-20 md:py-32 dark:bg-gray-900"
+>
+  <div className="container mx-auto px-4">
+    <h2 className="mb-12 text-center text-3xl font-bold tracking-tight md:text-4xl">
+      Um Plano Simples para o Seu Sucesso
+    </h2>
+    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+      {/* Plano Free */}
+      <Card className="flex flex-col shadow-xl">
+        <CardHeader className="text-center">
+          <CardTitle className="text-4xl font-bold">
+            Grátis
+            <span className="text-lg font-normal text-muted-foreground">
+              /mês
+            </span>
+          </CardTitle>
+          <p className="text-muted-foreground">
+            Até 2 funcionários, até 100 clientes
+          </p>
+        </CardHeader>
+        <CardContent className="flex flex-col space-y-4">
+          <ul className="space-y-2 text-muted-foreground">
+            <li className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-primary" />
+              Cadastro de clientes
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-primary" />
+              Cadastro e consulta de clientes com conduta duvidosa
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-primary" />
+              Limitações: sem e-mails ou WhatsApp
+            </li>
+          </ul>
+         <Button
+          asChild
+          className="w-full bg-primary text-white border border-black shadow hover:bg-white hover:text-primary transition-colors"
+          size="lg"
         >
-          <div className="container mx-auto px-4">
-            <h2 className="mb-12 text-center text-3xl font-bold tracking-tight md:text-4xl">
-              Um Plano Simples para o Seu Sucesso
-            </h2>
-            <div className="mx-auto max-w-md">
-              <Card className="shadow-xl">
-                <CardHeader className="text-center">
-                  <CardTitle className="text-4xl font-bold">
-                    999 MT
-                    <span className="text-lg font-normal text-muted-foreground">
-                      /mês
-                    </span>
-                  </CardTitle>
-                  <p className="text-muted-foreground">
-                    Por cada funcionário (user) registado.
-                  </p>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <ul className="space-y-2 text-muted-foreground">
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="h-5 w-5 text-primary" />
-                      Clientes ilimitados
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="h-5 w-5 text-primary" />
-                      Empréstimos ilimitados
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="h-5 w-5 text-primary" />
-                      Portal do Cliente incluído
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="h-5 w-5 text-primary" />
-                      Suporte 24/7
-                    </li>
-                  </ul>
-                  <Button asChild className="w-full" size="lg">
-                    <Link href="/login">Começar Teste Gratuito</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
+  <Link href="/login">Começar Grátis</Link>
+</Button>
+        </CardContent>
+      </Card>
+
+      {/* Plano Pro */}
+      <Card className="shadow-xl">
+        <CardHeader className="text-center">
+          <CardTitle className="text-4xl font-bold">
+            999 MT
+            <span className="text-lg font-normal text-muted-foreground">
+              /mês
+            </span>
+          </CardTitle>
+          <p className="text-muted-foreground">
+            Funcionários ilimitados, clientes ilimitados
+          </p>
+        </CardHeader>
+        <CardContent className="flex flex-col space-y-4">
+          <ul className="space-y-2 text-muted-foreground">
+            <li className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-primary" />
+              Tudo do plano Free
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-primary" />
+              Portal do Cliente incluído
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-primary" />
+              Suporte 24/7
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-primary" />
+              Envio de e-mails até 500/mês
+            </li>
+          </ul>
+          <Button asChild   className="w-full bg-primary text-white border border-black shadow hover:bg-white hover:text-primary transition-colors" size="lg">
+            <Link href="/login">Assinar Agora</Link>
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Plano Plus */}
+      <Card className="shadow-xl">
+        <CardHeader className="text-center">
+          <CardTitle className="text-4xl font-bold">
+            3.500 MT
+            <span className="text-lg font-normal text-muted-foreground">
+              /mês
+            </span>
+          </CardTitle>
+          <p className="text-muted-foreground">
+            Funcionalidades avançadas, clientes ilimitados
+          </p>
+        </CardHeader>
+        <CardContent className="flex flex-col space-y-4">
+          <ul className="space-y-2 text-muted-foreground">
+            <li className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-primary" />
+              Tudo do plano Pro
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-primary" />
+              Envio de e-mails ilimitado
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-primary" />
+              Envio de mensagens via WhatsApp
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-primary" />
+              Relatórios avançados e integração com sistemas externos
+            </li>
+          </ul>
+          <Button asChild   className="w-full bg-primary text-white border border-black shadow hover:bg-white hover:text-primary transition-colors" size="lg">
+            <Link href="/login">Assinar Agora</Link>
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  </div>
+</section>
+
       </main>
 
       <div>Footer</div> 

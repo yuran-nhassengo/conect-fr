@@ -17,6 +17,8 @@ import { useState } from "react";
 import { loginUser } from "@/app/services/auth";
 import { useRouter } from "next/navigation";
 
+import AuthHeader from "@/components/AuthHeader";
+
 export default function LoginPage() {
 
    const [email, setEmail] = useState('');
@@ -58,13 +60,16 @@ export default function LoginPage() {
   };
 
   return (
+    <><AuthHeader page="login" />
     <div className="w-full min-h-screen grid grid-cols-1 lg:grid-cols-2">
+       
       {/* Coluna Esquerda: Formulário */}
-      <div className="flex items-center justify-center p-6 md:p-12 bg-gray-50">
-        <div className="w-full max-w-lg">
+      <div className="flex items-center justify-center p-2 md:p-12 bg-gray-100">
+        <div className="w-full max-w-md md:max-w-lg lg:max-w-xl">
 
           {/* Card com 80% da altura da tela */}
-          <Card className="border rounded-xl shadow-lg p-6 md:p-10 h-[80vh] flex flex-col justify-center">
+           <Card className="bg-white rounded-2xl shadow-xl p-2 md:p-10 h-[80vh] flex flex-col justify-center border-0">
+
             <CardHeader className="text-center sm:text-left">
               <CardTitle className="text-4xl font-bold">
                 Bem-vindo de Volta
@@ -140,24 +145,32 @@ export default function LoginPage() {
       </div>
 
       {/* Coluna Direita: Testemunho */}
-      <div className="hidden lg:flex items-center justify-center p-12 bg-gradient-to-br from-blue-500 to-blue-700 text-white">
-        <div className="w-full max-w-md space-y-8">
-          <Landmark size={48} />
-          <div className="space-y-4">
-            <blockquote className="text-2xl font-semibold">
-              &ldquo;Este software mudou a forma como gerimos os nossos clientes.
-              A automatização dos juros poupa-nos dezenas de horas por mês.&rdquo;
+     <div className="hidden lg:flex items-center justify-center p-0">
+        <div className="relative w-full h-[100vh]">
+          {/* Imagem de fundo */}
+          <img
+            src="/images/login.png"
+            alt="Equipe diversa trabalhando"
+            className="w-full h-full object-cover"
+          />
+
+          {/* Degradê para legibilidade do texto (da direita para a esquerda) */}
+          <div className="absolute inset-0 pointer-events-none bg-gradient-to-l from-black/40 via-transparent to-transparent"></div>
+
+          {/* Container do texto (alinhado à direita) */}
+          <div className="absolute right-8 top-1/2 transform -translate-y-1/2 max-w-md text-right pr-6">
+            <blockquote className="text-white text-2xl font-semibold leading-relaxed drop-shadow-md">
+              “Este software mudou a forma como gerimos os nossos clientes.
+              A automatização dos juros poupa-nos dezenas de horas por mês.”
             </blockquote>
-            <div>
-              <div className="font-bold">Ana Silva</div>
-              <div className="text-sm text-blue-100">
-                Dona, Micro-Crédito Confiança
-              </div>
-            </div>
+            <div className="mt-4 text-white/90 font-bold">Ana Silva</div>
+            <div className="text-sm text-white/70">Dona, Micro-Crédito Confiança</div>
           </div>
         </div>
       </div>
 
     </div>
+
+    </>
   );
 }
